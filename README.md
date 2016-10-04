@@ -22,6 +22,7 @@ To run tests, invoke `make test`. The current test suite will just be checking r
 ## Usage
 
 ### Initialization
+
 ```php
 $redis = new \Redis(); // Using the Redis extension provided client
 $redis->connect('127.0.0.1', '6379');
@@ -30,7 +31,9 @@ $emitter->emit('event', 'payload str');
 ```
 
 ### Broadcasting and other flags
+
 Possible flags
+
 * json
 * volatile
 * broadcast
@@ -43,7 +46,24 @@ $emitter->broadcast->emit('other event', 'such data');
 ```
 
 ### Emitting objects
+
 ```php
 $emitter = new SocketIO\Emitter(); // If arguments are not provided, they will default to array('port' => '6379', 'host' => '127.0.0.1')
 $emitter->emit('event', array('property' => 'much value', 'another' => 'very object'));
 ```
+
+### Running tests
+
+```sh
+composer install
+vendor/bin/phpunit test/test.php
+```
+
+### Contributing
+
+1. Fork the repository on Github
+2. Create a named feature branch (like add_component_x)
+3. Write your change
+4. Write tests for your change (if applicable)
+5. Run the tests, ensuring they all pass
+6. Submit a Pull Request using Github
