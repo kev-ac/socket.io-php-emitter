@@ -8,36 +8,26 @@ class Emitter
     const BINARY_EVENT = 5;
 
     private $uid = 'emitter';
+    private $defaultOptions = ['host' => 'localhost', 'port' => 6379];
+    private $prefix = 'socket.io';
+    private $redis;
+    private $rooms = [];
+    private $flags = [];
 
-    public function __construct($redis = false, $opts = [])
+    public function __construct($redis = null, $opts = [])
     {
         if (is_array($redis)) {
             $opts = $redis;
-            $redis = false;
+            $redis = null;
         }
 
         // Apply default arguments
-        $opts = array_merge(['host' => 'localhost', 'port' => 6379], $opts);
+        $opts = array_merge($this->defaultOptions, $opts);
+
+        $redis = $redis ?: $this->createRedisClient($redis, $opts);
 
         if (!$redis) {
-            // Default to phpredis
-            if (extension_loaded('redis')) {
-                if (!isset($opts['socket']) && !isset($opts['host'])) {
-                    throw new \Exception('Host should be provided when not providing a redis instance');
-                }
-                if (!isset($opts['socket']) && !isset($opts['port'])) {
-                    throw new \Exception('Port should be provided when not providing a redis instance');
-                }
-
-                $redis = new \Redis();
-                if (isset($opts['socket'])) {
-                    $redis->connect($opts['socket']);
-                } else {
-                    $redis->connect($opts['host'], $opts['port']);
-                }
-            } else {
-                $redis = new \TinyRedisClient($opts['host'] . ':' . $opts['port']);
-            }
+            throw new \Exception('No Redis client provided.');
         }
 
         if (!is_callable([$redis, 'publish'])) {
@@ -46,59 +36,54 @@ class Emitter
 
         $this->redis = $redis;
         $this->prefix = isset($opts['key']) ? $opts['key'] : 'socket.io';
-
-        $this->_rooms = [];
-        $this->_flags = [];
     }
 
-    /*
+    /**
      * Flags
+     * @param string $flag eg: json, volatile, broadcast
+     * @return self
      */
-
     public function __get($flag)
     {
-        $this->_flags[$flag] = true;
+        $this->flags[$flag] = true;
         return $this;
     }
 
     private function readFlag($flag)
     {
-        return isset($this->_flags[$flag]) ? $this->_flags[$flag] : false;
+        return isset($this->flags[$flag]) ? $this->flags[$flag] : false;
     }
 
-    /*
+    /**
      * Broadcasting
      */
-
     public function in($room)
     {
-        if (!in_array($room, $this->_rooms)) {
-            $this->_rooms[] = $room;
+        if (!in_array($room, $this->rooms)) {
+            $this->rooms[] = $room;
         }
 
         return $this;
     }
 
-    // Alias for in
+    /** Alias for in */
     public function to($room)
     {
         return $this->in($room);
     }
 
-    /*
+    /**
      * Namespace
      */
-
     public function of($nsp)
     {
-        $this->_flags['nsp'] = $nsp;
+        $this->flags['nsp'] = $nsp;
         return $this;
     }
 
-    /*
+    /**
      * Emitting
      */
-
     public function emit()
     {
         $args = func_get_args();
@@ -121,16 +106,16 @@ class Emitter
         $packet['data'] = $args;
 
         // set namespace
-        if (isset($this->_flags['nsp'])) {
-            $packet['nsp'] = $this->_flags['nsp'];
-            unset($this->_flags['nsp']);
+        if (isset($this->flags['nsp'])) {
+            $packet['nsp'] = $this->flags['nsp'];
+            unset($this->flags['nsp']);
         } else {
             $packet['nsp'] = '/';
         }
 
         $opts = [
-            'rooms' => $this->_rooms,
-            'flags' => $this->_flags
+            'rooms' => $this->rooms,
+            'flags' => $this->flags
         ];
         $chn = $this->prefix . '#' . $packet['nsp'] . '#';
         $packed = msgpack_pack([$this->uid, $packet, $opts]);
@@ -142,8 +127,8 @@ class Emitter
         }
 
         // publish
-        if (is_array($this->_rooms) && count($this->_rooms) > 0) {
-            foreach ($this->_rooms as $room) {
+        if (is_array($this->rooms) && count($this->rooms) > 0) {
+            foreach ($this->rooms as $room) {
                 $chnRoom = $chn . $room . '#';
                 $this->redis->publish($chnRoom, $packed);
             }
@@ -152,9 +137,38 @@ class Emitter
         }
 
         // reset state
-        $this->_rooms = [];
-        $this->_flags = [];
+        $this->rooms = [];
+        $this->flags = [];
 
         return $this;
+    }
+
+    /**
+     * @param $opts
+     * @return null|\Redis
+     * @throws \Exception
+     */
+    protected function createRedisClient($opts)
+    {
+        if (extension_loaded('redis')) {
+            if (!isset($opts['socket']) && !isset($opts['host'])) {
+                throw new \Exception('Host should be provided when not providing a redis instance');
+            }
+            if (!isset($opts['socket']) && !isset($opts['port'])) {
+                throw new \Exception('Port should be provided when not providing a redis instance');
+            }
+
+            $redis = new \Redis();
+            if (isset($opts['socket'])) {
+                $redis->connect($opts['socket']);
+            } else {
+                $redis->connect($opts['host'], $opts['port']);
+            }
+            return $redis;
+        } elseif (class_exists('TinyRedisClient')) {
+            return new \TinyRedisClient($opts['host'] . ':' . $opts['port']);
+        }
+
+        return null;
     }
 }
