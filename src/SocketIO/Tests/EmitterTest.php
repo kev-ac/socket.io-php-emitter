@@ -107,7 +107,6 @@ class EmitterTest extends \PHPUnit_Framework_TestCase
         sleep(1);
         // Running this should produce something that's visible in `redis-cli monitor`
         $emitter = new Emitter(null, ['host' => '127.0.0.1', 'port' => '6379']);
-        $emitter->binary;
         $binarydata = pack('CCCCC', 0, 1, 2, 3, 4);
         $emitter->emit('binary event', $binarydata);
 

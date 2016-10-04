@@ -24,7 +24,7 @@ class Emitter
         // Apply default arguments
         $opts = array_merge($this->defaultOptions, $opts);
 
-        $redis = $redis ?: $this->createRedisClient($redis, $opts);
+        $redis = $redis ?: $this->createRedisClient($opts);
 
         if (!$redis) {
             throw new \Exception('No Redis client provided.');
@@ -91,11 +91,10 @@ class Emitter
 
         $packet['type'] = self::EVENT;
         // handle binary wrapper args
-        for ($i = 0; $i < count($args); $i++) {
-            $arg = $args[$i];
+        foreach ($args as &$arg) {
             if ($arg instanceof Binary) {
-                $args[$i] = strval($arg);
-                $this->binary;
+                $arg = strval($arg);
+                $this->flags['binary'] = true;
             }
         }
 
