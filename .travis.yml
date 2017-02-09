@@ -10,8 +10,8 @@ install:
   - composer update
 
 script:
-  - phpunit
   - vendor/bin/phpcs -n -p --encoding=utf-8 --standard=PSR2 --extensions=php src/
+  - vendor/bin/phpunit
 
 services:
   - redis-server
