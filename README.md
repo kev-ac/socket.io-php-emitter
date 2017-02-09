@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/ashiina/socket.io-php-emitter.svg?branch=master)](https://travis-ci.org/ashiina/socket.io-php-emitter)
 
 ### *Maintained Fork*
 
