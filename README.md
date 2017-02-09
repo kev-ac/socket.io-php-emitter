@@ -12,12 +12,18 @@ socket.io-php-emitter
 
 A PHP implementation of socket.io-emitter.
 
-This project requires a Redis client for PHP. If you dont have the [PECL Redis](https://github.com/nicolasff/phpredis) installed, the emitter will default to using [TinyRedisClient](https://github.com/ptrofimov/tinyredisclient). You can, however, pass in any Redis client that supports a `publish` method.
+## Install and Set Up
 
-## Installation and development
+### 1. socket.io-php-emitter
 To install and use in your PHP project, install it as a [composer package](https://packagist.org/packages/ashiina/socket.io-emitter). Install dependencies with `composer install`.
 
-To run tests, invoke `make test`. The current test suite will just be checking redis monitor that everything is published correctly. Some work will be put into making a better integration test suite in the near future.
+### 2. Redis server
+You need a redis server to emit events to.
+Set up your redis server.
+
+### 3. socket.io-redis (node.js)
+To receive the emitted events, you are required to use `socket.io-redis`. It will automatically handle the event published from `socket.io-php-emitter`.
+Install and set up from here : https://www.npmjs.com/package/socket.io-redis
 
 ## Usage
 
@@ -68,3 +74,12 @@ vendor/bin/phpunit test/test.php
 4. Write tests for your change (if applicable)
 5. Run the tests, ensuring they all pass
 6. Submit a Pull Request using Github
+
+### About PHP Redis clients
+
+This project requires a Redis client for PHP. If you dont have the [PECL Redis](https://github.com/nicolasff/phpredis) installed, the emitter will default to using [TinyRedisClient](https://github.com/ptrofimov/tinyredisclient). You can, however, pass in any Redis client that supports a `publish` method.
+
+### Development
+
+To run tests, invoke `make test`. The current test suite will just be checking redis monitor that everything is published correctly. Some work will be put into making a better integration test suite in the near future.
+
