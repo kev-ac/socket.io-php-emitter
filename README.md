@@ -62,7 +62,7 @@ $emitter->emit('event', array('property' => 'much value', 'another' => 'very obj
 
 ```sh
 composer install
-vendor/bin/phpunit --standard=PSR2 --encoding=utf-8 -n -p src/
+vendor/bin/phpcs --standard=PSR2 --encoding=utf-8 -n -p src/
 vendor/bin/phpunit test/test.php
 ```
 
