@@ -1,11 +1,6 @@
 {
-    "name": "ashiina/socket.io-emitter",
-    "description": "*Maintained* A PHP implementation of socket.io-emitter",
-    "homepage": "https://github.com/ashiina/socket.io-php-emitter",
-    "support": {
-        "issues": "https://github.com/ashiina/socket.io-php-emitter/issues",
-        "source": "https://github.com/ashiina/socket.io-php-emitter"
-    },
+    "name": "tf-kevin/socket.io-emitter",
+    "description": "A PHP implementation of socket.io-emitter",
     "license": "MIT",
     "keywords": [
         "socket.io",
