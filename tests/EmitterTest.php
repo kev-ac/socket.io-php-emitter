@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../vendor/autoload.php'; // Autoload files using Composer autoload
-include 'process.php';
+include 'class_process.php';
 
 use SocketIO\Emitter;
 use SocketIO\Binary;

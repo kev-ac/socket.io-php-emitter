@@ -1,4 +1,4 @@
-name: CI
+name: CI tests
 
 on:
   push:
@@ -6,12 +6,20 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        redis-version: [5, 6]
 
     steps:
     - uses: actions/checkout@v2
     
     - uses: php-actions/composer@v5
-    
+
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.2.0
+      with:
+        redis-version: ${{ matrix.redis-version }}    
+
     - name: PHPUnit tests
       uses: php-actions/phpunit@v3
       with:
