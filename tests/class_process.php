@@ -29,7 +29,7 @@ class Process{
   }
 
   public function status(){
-    $command = 'ps -p '.$this->pid;
+    $command = 'ps '.$this->pid;
     exec($command,$op);
     if (!isset($op[1]))return false;
     else return true;

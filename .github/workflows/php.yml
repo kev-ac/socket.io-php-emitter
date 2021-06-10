@@ -19,6 +19,9 @@ jobs:
       uses: supercharge/redis-github-action@1.2.0
       with:
         redis-version: ${{ matrix.redis-version }}    
+ 
+    - name: Install redis-cli
+      run: sudo apt-get update && sudo apt-get install redis-tools -y
 
     - name: PHPUnit tests
       uses: php-actions/phpunit@v3
