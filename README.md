@@ -1,5 +1,6 @@
 socket.io-php-emitter
 =====================
+[![CI](https://github.com/tf-kevin/socket.io-php-emitter/actions/workflows/php.yml/badge.svg)](https://github.com/tf-kevin/socket.io-php-emitter/actions/workflows/php.yml)
 
 A PHP implementation of socket.io-emitter.
 
