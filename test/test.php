@@ -5,8 +5,9 @@ include 'process.php';
 
 use SocketIO\Emitter;
 use SocketIO\Binary;
+use PHPUnit\Framework\TestCase;
 
-class EmitterTest extends PHPUnit_Framework_TestCase {
+class EmitterTest extends TestCase {
   public function testEmitCreatesARedisPublish() {
     $p = new Process('redis-cli monitor > redis.log');
 
