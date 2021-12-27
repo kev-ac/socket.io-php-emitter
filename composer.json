@@ -1,5 +1,5 @@
 {
-    "name": "tf-kevin/socket.io-emitter",
+    "name": "kev-ac/socket.io-emitter",
     "description": "A PHP implementation of socket.io-emitter",
     "license": "MIT",
     "keywords": [
